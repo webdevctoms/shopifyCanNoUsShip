@@ -92,6 +92,42 @@ GetData.prototype.getData = function(dataArray,page,url) {
 
 	return promise;
 };
+
+GetData.prototype.getDataFromArray = function(dataArray,collectionData,url,productIndex) {
+	if(dataArray === undefined){
+		dataArray = [];
+	}
+	let promise = new Promise((resolve,reject) => {
+		if(productIndex < collectionData.length){
+			let productID = collectionData[productIndex].product_id;
+			let newUrl = url + "products/" + productID + ".json";
+
+			const authKey = Buffer.from(this.user_k + ":" + this.user_p).toString('base64');
+			//console.log(newUrl,this.user_k,this.user_p,authKey);
+			const options = {
+				url:newUrl,
+				headers:{
+					"Authorization":"Basic " + authKey
+				}
+			}
+			console.log("===============Making request",newUrl,productIndex);
+			request(options,function(error,response,body){
+				
+				let parsedBody = JSON.parse(body);
+				console.log("===============Got data: ",parsedBody.product.title);		
+				dataArray.push(parsedBody.product);
+				resolve(this.getDataFromArray(dataArray,collectionData,url,productIndex + 1));				
+			}.bind(this));
+		}
+		else{	
+			resolve(dataArray);
+		}
+		
+	});
+
+	return promise;
+};
+
 //meant for sorting by variant
 GetData.prototype.sortData = function(arr,key1,key2){
 	return arr.sort((a,b) => {

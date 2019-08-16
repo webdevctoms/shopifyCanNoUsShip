@@ -19,7 +19,7 @@ SaveToShopify.prototype.buildData = function(data){
 };
 
 SaveToShopify.prototype.saveData = function(productIndex) {
-	var promise = new Promise((resolve,reject) => {
+	let promise = new Promise((resolve,reject) => {
 		let productID = this.productData[productIndex].product_id ? this.productData[productIndex].product_id:this.productData[productIndex].id;
 		let newUrl = this.url + "products/" + productID + ".json";
 		console.log(newUrl);

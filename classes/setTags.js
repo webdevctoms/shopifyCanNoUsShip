@@ -33,5 +33,16 @@ SetTags.prototype.convertData = function() {
 
 	return this.productData;
 };
+//used to convert collection data
+SetTags.prototype.convertAllData = function(data) {
+	//console.log(data);
+	for(let i = 0;i < data.length;i++){
+		if(!(data[i].tags.includes(this.newTag))){
+			data[i].tags += ', ' + this.newTag;
+		}
+	}
+
+	return data;
+};
 
 module.exports = {SetTags};

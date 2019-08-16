@@ -91,14 +91,38 @@ router.get('/backup',checkKey,(req,res) => {
 //update tags on shopify
 router.post('/update',checkKey,checkFields,checkCollectionId,(req,res) => {
 	const fields = req.body.fields;
+	let setTags;
 	const newUrl = req.newUrl;
 	const getData = new GetData(newUrl,USERKC,USERPC,fields);
 	const email = new SendMail(EMAIL,EP);
 	return getData.getData([],1)
-
+	
 	.then(data => {
-		const setTags = new SetTags(data);
+		setTags = new SetTags(data);
 		const convertedData = setTags.convertData(data);
+		const halfIndex = Math.round(convertedData.length / 2);
+		const halfData1 = convertedData.slice(0,halfIndex);
+		const halfData2 = convertedData.slice(halfIndex,convertedData.length);
+		const shopifyKeys = ['tags'];
+		const saveToShopify = new SaveToShopify(halfData1,URLCAD,USERKC,USERPC,shopifyKeys);
+		const saveToShopify2 = new SaveToShopify(halfData2,URLCAD,USERKC,USERPC,shopifyKeys);
+		 
+		return Promise.all([saveToShopify.saveData(0),saveToShopify2.saveData(0)])
+	})
+	//grab data from collection
+	.then(data => {
+		return getData.getData([],1,req.collectionUrl)
+	})
+	//get single product data from collection data
+	.then(data => {
+		console.log('collect length: ',data.length);
+		
+		return getData.getDataFromArray([],data,URLCAD,0)
+	})
+	//save collection data
+	.then(data => {
+		console.log('done collection single data: ',data.length);
+		const convertedData = setTags.convertAllData(data);
 		const halfIndex = Math.round(convertedData.length / 2);
 		const halfData1 = convertedData.slice(0,halfIndex);
 		const halfData2 = convertedData.slice(halfIndex,convertedData.length);
@@ -110,11 +134,8 @@ router.post('/update',checkKey,checkFields,checkCollectionId,(req,res) => {
 	})
 
 	.then(data => {
-		return getData.getData([],1,req.collectionUrl)
-	})
+		console.log('done saving data: ',data.length);
 
-	.then(data => {
-		console.log('done saving: ',data.length);
 		return email.send('test@email.com',SENDEMAIL,'Save Data','<b>Done saving data to Shopify</b>')
 	})
 
