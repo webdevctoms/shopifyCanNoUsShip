@@ -73,9 +73,8 @@ GetData.prototype.getData = function(dataArray,page,url) {
 				//possibly just push data straight into dataArray?
 				for(let i = 0;i < log.length;i++){
 					let currentProduct = log[i];
-					let currentObject = this.setFields(currentProduct);
-					//console.log(currentObject.title);
-					dataArray.push(currentObject);
+					
+					dataArray.push(currentProduct);
 				}
 				//let lastId = parsedBody.products[parsedBody.products.length - 1].id;
 				resolve(this.getData(dataArray,page + 1,url));
