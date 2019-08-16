@@ -4,6 +4,8 @@ function GetData(url,user_k,user_p,fields){
 	this.url = url;
 	this.user_k = user_k;
 	this.user_p = user_p;
+	//array of strings that match the fields in the url
+	//used to build the return data
 	this.fields = fields;
 }
 //Only capture data from first variant because if we need all variant data
