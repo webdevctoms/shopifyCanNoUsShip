@@ -4,8 +4,10 @@ const {PORT, DATABASE_URL } = require('./config');
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const jsonParser = bodyParser.json();
+const {router: saveRouter} = require('./routers/saveData');
 const app = express();
 app.use(jsonParser);
+app.use('/save',saveRouter);
 let server;
 
 function runServer( databaseUrl, port = PORT) {
