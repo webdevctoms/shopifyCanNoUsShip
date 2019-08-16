@@ -34,6 +34,9 @@ GetData.prototype.logger = function(parsedBody){
 	else if(parsedBody.metafields){
 		return parsedBody.metafields;
 	}
+	else if(parsedBody.collects){
+		return parsedBody.collects;
+	}
 	else{
 		return [];
 	}

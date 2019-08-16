@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const {checkKey,checkFields} = require("../tools/exports");
+const {checkKey,checkFields,checkCollectionId} = require("../tools/exports");
 const {Tags} = require('../models/tags');
 const {URLCAD,USERKC,USERPC,EMAIL,EP,SENDEMAIL} = require('../config');
 const {GetData,SendMail,SaveDB,SaveToShopify,SetTags} = require('../classes/exports');
@@ -89,7 +89,7 @@ router.get('/backup',checkKey,(req,res) => {
 });
 
 //update tags on shopify
-router.post('/update',checkKey,checkFields,(req,res) => {
+router.post('/update',checkKey,checkFields,checkCollectionId,(req,res) => {
 	const fields = req.body.fields;
 	const newUrl = req.newUrl;
 	const getData = new GetData(newUrl,USERKC,USERPC,fields);
@@ -110,7 +110,11 @@ router.post('/update',checkKey,checkFields,(req,res) => {
 	})
 
 	.then(data => {
-		console.log('done saving: ',data);
+		return getData.getData([],1,req.collectionUrl)
+	})
+
+	.then(data => {
+		console.log('done saving: ',data.length);
 		return email.send('test@email.com',SENDEMAIL,'Save Data','<b>Done saving data to Shopify</b>')
 	})
 
